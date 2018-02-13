@@ -1,3 +1,4 @@
+var debug = require('debug')('scchat')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 // var favicon = require('serve-favicon')
@@ -8,6 +9,8 @@ var path = require('path')
 var routes = require('./routes/index')
 
 var app = express()
+
+debug('App starting')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
