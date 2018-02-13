@@ -5,6 +5,19 @@ block content
   p Welcome to #{title}
   div#chat
     p Chat messages will appear here
+  input(name='message', id='message', placeholder='Enter message here')
+
   script(src="/socket.io/socket.io.js")
   script.
     var socket = io('//')
+    var message = document.querySelector('#message')
+    message.addEventListener('keydown', function(event) {
+      if (event.which === 13 ) {
+        socket.emit('c2s', message.value)
+        message.value = ''
+      }
+    })
+    socket.on('s2c', function (incomingMessage) {
+      var chat = document.querySelector('#chat')
+      chat.innerHTML += '<p>' + incomingMessage + '</p>'
+    })

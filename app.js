@@ -68,11 +68,18 @@ app.use(function (err, req, res, next) {
 function websocketHandler (socket) {
   debug('socketio connection just started')
 
+  function chatMessage(message) {
+    debug('Chat message received: ' + message)
+    io.emit('s2c', message)
+  }
+
   function disconnect () {
     debug('socketio connection terminated')
   }
 
   socket.on('disconnect', disconnect)
+
+  socket.on('c2s', chatMessage)
 }
 
 io.sockets.on('connection', websocketHandler)
