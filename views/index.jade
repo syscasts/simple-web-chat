@@ -5,3 +5,6 @@ block content
   p Welcome to #{title}
   div#chat
     p Chat messages will appear here
+  script(src="/socket.io/socket.io.js")
+  script.
+    var socket = io('//')
