@@ -2,7 +2,7 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to #{title}: #{channel}
   div#chat
     p Chat messages will appear here
   input(name='message', id='message', placeholder='Enter message here')
@@ -21,3 +21,14 @@ block content
       var chat = document.querySelector('#chat')
       chat.innerHTML += '<p>' + incomingMessage + '</p>'
     })
+    socket.on('joinpart', function (incomingEvent) {
+      var chat = document.querySelector('#chat')
+      chat.innerHTML += '<p><i>' + incomingEvent + '</i></p>'
+    })
+    window.onload = function () {
+      if ('#{channel}'.length === 0) {
+        socket.emit('join', 'index')
+      } else {
+        socket.emit('join', '#{channel}')
+      }
+    }

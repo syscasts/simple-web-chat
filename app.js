@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser')
 var express = require('express')
 var logger = require('morgan')
 var path = require('path')
+var redis = require('redis')
 
 var routes = require('./routes/index')
 
@@ -67,17 +68,45 @@ app.use(function (err, req, res, next) {
 
 function websocketHandler (socket) {
   debug('socketio connection just started')
+  var sub = redis.createClient()
+  var pub = redis.createClient()
+  var currentChannel
 
-  function chatMessage(message) {
+  function joinChannel (channel) {
+    currentChannel = channel
+    sub.subscribe(channel)
+    socket.emit('joinpart', 'Welcome to ' + channel)
+  }
+
+  sub.on('subscribe', function (channel, count) {
+    var message = 'Someone joined channel: ' + channel
+    debug(message)
+    pub.publish(channel, JSON.stringify({type: 'joinpart', content: message}, null, 2))
+  })
+
+  sub.on('message', function (channel, rawMessage) {
+    debug('got message on channel ' + channel + ': ' + rawMessage)
+    var message = JSON.parse(rawMessage)
+    socket.emit(message.type, message.content)
+  })
+
+  function chatMessage (message) {
     debug('Chat message received: ' + message)
-    io.emit('s2c', message)
+    pub.publish(currentChannel, JSON.stringify({type: 's2c', content: message}, null, 2))
   }
 
   function disconnect () {
     debug('socketio connection terminated')
+    if (currentChannel) {
+      pub.publish(currentChannel, JSON.stringify({type: 'joinpart', content: 'User left'}, null, 2))
+    }
+    sub.unsubscribe()
+    sub.quit()
+    pub.quit()
   }
 
   socket.on('disconnect', disconnect)
+  socket.on('join', joinChannel)
 
   socket.on('c2s', chatMessage)
 }
