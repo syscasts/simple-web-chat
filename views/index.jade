@@ -9,7 +9,7 @@ block content
 
   script(src="/socket.io/socket.io.js")
   script.
-    var socket = io('//')
+    var socket = io('//', { transports: ['websocket']})
     var message = document.querySelector('#message')
     message.addEventListener('keydown', function(event) {
       if (event.which === 13 ) {

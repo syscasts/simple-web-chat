@@ -82,6 +82,7 @@ function websocketHandler (socket) {
   socket.on('c2s', chatMessage)
 }
 
+io.set('transports', [ 'websocket' ])
 io.sockets.on('connection', websocketHandler)
 
 module.exports = {app: app, server: server}
