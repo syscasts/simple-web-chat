@@ -1,6 +1,9 @@
 # Simple webchat
 
-This is a simple webchat application created to demonstrate use of websockets.
+This is a simple webchat application created to demonstrate use of websockets. It supports multiple channels, but no simple interface for joining/leaving channels or viewing a channel index.
+Join a channel simply by browsing to a URL with the channel name set as a query string parameter called `channel`, e.g.
+
+http://localhost:3003/?channel=testchannel
 
 # Requirements
 `npm` and `redis`.
